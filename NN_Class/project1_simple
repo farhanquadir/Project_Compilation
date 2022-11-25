@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 20 21:44:20 2019
+
+@author: farhan
+"""
+
+import numpy as np
+
+
+# Declare global variables
+#learning rate 
+
+lr = 0.2
+
+#inputs X
+x =np.array(
+        [0.0, 0.0, 0.8, 0.4, 0.4, 0.1, 0.0, 0.0, 0.0])
+
+# labels y
+y = np.array(
+        [-1])
+
+# shared weights. Last element is the bias
+
+green = np.array([1.73673761, 1.89791391, -2.10677342, -0.14891209, 0.58306155])
+
+orange = np.array([-2.25923303, 0.13723954, -0.70121322, -0.62078008, -0.47961976])
+
+wout = np.array([1.20973877, -1.07518386, 0.80691921, -0.29078347, -0.22094764, -0.16915604, 1.10083444, 0.08251052, 
+                 -0.00437558, -1.72255825, 1.05755642, -2.51791281, -1.91064012])
+
+
+
+# Build a simple 1D convolution with shared weights
+# sigmoid
+def sigmoid(x, derive=False):
+    if derive:
+        return x * (1 - x)
+    return 1 / (1 + np.exp(-x))
+###################################################################################################################
+# tanh loss function 
+def tanh(x, derive=False):
+    if derive:
+        return (1 - x*x)
+    return (np.exp(2*x)-1) / (1 + np.exp(2*x))
+###################################################################################################################
+# binary cross entropy
+def crossEntropy (yHat,y, derive=False):
+    if derive:
+        if y ==1:
+            return (-1/yHat)
+        else: 
+             return (1/(1-yHat))
+    if y==1:
+        return -np.log(yHat)
+    else:
+        return -np.log(1 - yHat)    
+###################################################################################################################
+#Mean Squared Error
+def msqe(d,y,derive=False):
+    if derive == True:
+        return -1*(d-y)
+    return 0.5 * (d-y)*(d-y)
+###################################################################################################################
