@@ -1,0 +1,74 @@
+close all
+clear all
+clc
+%% data import and parameter of W matrix
+data=importdata('SquareInsideCircle.dat');
+[row, col]=size(data);
+sigma2=2;
+e=1.5;
+
+%% creating W matrix
+for i=1:col
+    for j=1:col
+        x1=data(1,i);
+        y1=data(2,i);
+        x2=data(1,j);
+        y2=data(2,j);
+        dist=sqrt((x1-x2)^2+(y1-y2)^2);
+        if dist<e
+            W(i,j)=exp(-dist^2/(2*sigma2));
+        else
+            W(i,j)=0;
+        end
+    end
+end
+
+%% creating the Degree (D) matrix and L matrix
+degree=sum(W');
+D=zeros(col,col);
+for i=1:col
+    D(i,i)=degree(i);
+end
+
+%% eigen decomposition
+L=D-W;
+[V,E]=eig(L,D);
+
+%% finding the eigen vector of 2nd lowest eigen value
+eigenOrder=sort(diag(E));
+[minidx,minidy]=find(E==eigenOrder(2));
+vector=V(:,2);
+
+%% assigning to clusters
+thresh=mean(vector);
+cx1=[];
+cy1=[];
+cx2=[];
+cy2=[];
+for i=1:length(vector)
+    if vector(i)>thresh
+        cx1(end+1)=data(1,i);
+        cy1(end+1)=data(2,i);
+    else
+        cx2(end+1)=data(1,i);
+        cy2(end+1)=data(2,i);
+    end
+end
+
+%% figure creation
+figure(1), plot(1:length(diag(E)), diag(E));
+title("Plot of eigenvalues")
+xlabel("order of eigenvalues")
+ylabel("Eigenvalues")
+
+%figure(2), plot(1:length(vector),vector);
+figure(2), scatter(1:length(vector),vector','*')
+title("Plot of eigenvector of the second lowest eigen value")
+
+figure(3);
+scatter(cx1,cy1,'r','o')
+hold on
+scatter(cx2,cy2,'b','*')
+hold off
+title("Clustering")
+legend('cluster1','cluster2')
